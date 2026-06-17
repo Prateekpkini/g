@@ -1,0 +1,13 @@
+!pip install gensim
+import gensim.downloader as api
+model = api.load("glove-wiki-gigaword-100")
+print("Word Relationships Using Vector Arithmetic:\n")
+examples = [
+    (["king", "woman"], ["man"], "king - man + woman"),
+    (["paris", "italy"], ["france"], "paris - france + italy"),
+    (["doctor", "woman"], ["man"], "doctor - man + woman")
+]
+for positive, negative, expression in examples:
+    result = model.most_similar(positive=positive, negative=negative, topn=1)
+    word, score = result[0]
+    print(f"{expression} = {word} (similarity: {score:.3f})")

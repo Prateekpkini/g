@@ -1,0 +1,84 @@
+!pip install langchain langchain-community langchain-cohere cohere wikipedia -q
+import os
+from langchain_cohere import ChatCohere
+from langchain_core.prompts import PromptTemplate
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_community.tools import WikipediaQueryRun
+from pydantic import BaseModel
+os.environ["COHERE_API_KEY"] = "1lYgysNfx6fFLK8GDwJt14IPUzWkjbHIjKHhdN5y"
+llm = ChatCohere(model="command-a-03-2025")
+institution = input("Enter Institution Name: ")
+wiki = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
+text = wiki.run(institution)
+class InstitutionInfo(BaseModel):
+    founder: str
+    founded_year: str
+    branches: str
+    employees: str
+    summary: str
+class InstitutionParser:
+    def parse(self, text):
+        text = text.replace("*", "").strip()   # Clean formatting
+
+        data = {
+            "founder": "N/A",
+            "founded_year": "N/A",
+            "branches": "N/A",
+            "employees": "N/A",
+            "summary": ""
+        }
+
+        lines = text.split("\n")
+        summary_lines = []
+
+        for line in lines:
+            line = line.strip()
+
+            if line.lower().startswith("founder"):
+                data["founder"] = line.split(":",1)[-1].strip()
+
+            elif line.lower().startswith("founded"):
+                data["founded_year"] = line.split(":",1)[-1].strip()
+
+            elif line.lower().startswith("branches"):
+                data["branches"] = line.split(":",1)[-1].strip()
+
+            elif line.lower().startswith("employees"):
+                data["employees"] = line.split(":",1)[-1].strip()
+
+            elif "summary" in line.lower():
+                summary_lines.append(line.split(":",1)[-1].strip())
+
+            elif summary_lines:
+                summary_lines.append(line)
+
+        data["summary"] = " ".join(summary_lines)
+
+        return InstitutionInfo(**data)
+prompt = PromptTemplate(
+    template="""
+Extract the following details from the text:
+
+Founder:
+Founded:
+Branches:
+Employees:
+Summary (4 lines):
+
+Text:
+{text}
+
+Return output in same format.
+""",
+    input_variables=["text"]
+)
+final_prompt = prompt.format(text=text)
+response = llm.invoke(final_prompt)
+parser = InstitutionParser()
+result = parser.parse(response.content)
+print("\n--- Institution Details ---\n")
+print("Founder:", result.founder)
+print("Founded Year:", result.founded_year)
+print("Branches:", result.branches)
+print("Employees:", result.employees)
+print("Summary:", result.summary)

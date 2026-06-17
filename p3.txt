@@ -1,0 +1,29 @@
+!pip install gensim nltk -q
+from gensim.models import Word2Vec
+import nltk
+from nltk.tokenize import word_tokenize
+nltk.download('punkt', quiet=True)
+corpus = [
+    "patient is treated in hospital",
+    "doctor prescribes medicine",
+    "nurse cares for patient",
+    "hospital provides medical treatment",
+    "surgery is performed by surgeon",
+    "medicine helps patient recover",
+    "doctor and nurse work in hospital"
+]
+data = [word_tokenize(sentence.lower()) for sentence in corpus]
+print("=== Tokenized Corpus ===")
+for sentence in data:
+    print(sentence)
+model = Word2Vec(sentences=data, vector_size=50, window=3, min_count=1, sg=1)
+print("\n=== Word2Vec Model Trained Successfully ===")
+def show_similar(word):
+    print(f"\nSimilar words to '{word}':")
+    for w, score in model.wv.most_similar(word, topn=5):
+        print(f"  {w}  --> similarity = {score:.3f}")
+show_similar("patient")
+show_similar("doctor")
+print("\n=== Word Similarity Scores ===")
+print(f"doctor ↔ hospital : {model.wv.similarity('doctor', 'hospital'):.3f}")
+print(f"doctor ↔ medicine : {model.wv.similarity('doctor', 'medicine'):.3f}")

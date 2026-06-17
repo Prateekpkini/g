@@ -1,0 +1,15 @@
+!pip install transformers==4.41.2
+from transformers import pipeline
+print("Loading Summarization Model...")
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")##Bidirectional and Auto-Regressive Transformers
+print("Model Loaded Successfully!")
+text = """
+Artificial Intelligence (AI) is transforming industries such as healthcare,
+education, finance, and transportation. AI systems analyze large amounts of data
+to make intelligent decisions. Applications include chatbots, recommendation systems,
+and autonomous vehicles. However, ethical concerns such as privacy and bias must
+be addressed for responsible AI development.
+"""
+summary = summarizer(text, max_length=60, min_length=20, do_sample=False)
+print("\nOriginal Text:\n", text)
+print("\nSummarized Text:\n", summary[0]['summary_text'])

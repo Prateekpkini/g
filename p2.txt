@@ -1,0 +1,23 @@
+import gensim.downloader as api
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+model = api.load("glove-wiki-gigaword-50")
+words = ["computer", "software", "hardware", "internet", "data",
+         "network", "algorithm", "programming", "learning", "robot"]
+vectors = [model[word] for word in words]
+pca = PCA(n_components=2)
+reduced_vectors = pca.fit_transform(vectors)
+plt.figure(figsize=(8, 6))
+for i, word in enumerate(words):
+    x, y = reduced_vectors[i]
+    plt.scatter(x, y)
+    plt.text(x + 0.01, y + 0.01, word)
+plt.title("Word Embedding Visualization using PCA (Technology Domain)")
+plt.xlabel("Component 1")
+plt.ylabel("Component 2")
+plt.show()
+input_word = "computer"
+similar_words = model.most_similar(input_word, topn=5)
+print(f"\n5 semantically similar words to '{input_word}':")
+for w, score in similar_words:
+    print(f"{w} -> similarity: {score:.3f}")

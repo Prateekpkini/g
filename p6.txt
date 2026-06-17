@@ -1,0 +1,19 @@
+!pip install transformers -q
+from transformers import pipeline
+print("Loading Sentiment Model...\n")
+sentiment_analyzer = pipeline("sentiment-analysis")
+print("Model Loaded Successfully ✅\n")
+reviews = [
+    "The product quality is excellent.",
+    "I am very unhappy with the service.",
+    "Delivery was fast and packaging was good.",
+    "The experience was terrible.",
+    "It is okay, not bad."
+]
+results = sentiment_analyzer(reviews)
+print("Sentiment Analysis Results:\n")
+for review, result in zip(reviews, results):
+    print("Review    :", review)
+    print("Sentiment :", result['label'])
+    print("Confidence:", round(result['score'], 3))
+    print("-" * 50)

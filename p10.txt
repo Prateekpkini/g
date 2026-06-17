@@ -1,0 +1,67 @@
+!pip install -q PyPDF2 sentence-transformers faiss-cpu cohere
+import PyPDF2
+import faiss
+import numpy as np
+from sentence_transformers import SentenceTransformer
+import cohere
+from google.colab import files
+uploaded = files.upload()
+file_name = list(uploaded.keys())[0]
+print("📂 Uploaded file:", file_name)
+def load_pdf(file_path):
+    text = ""
+    with open(file_path, "rb") as file:
+        reader = PyPDF2.PdfReader(file)
+        for page in reader.pages:
+            text += page.extract_text()
+    return text
+
+ipc_text = load_pdf(file_name)
+print("✅ IPC Text Loaded Successfully!")
+def split_text(text, chunk_size=1000):
+    chunks = []
+    for i in range(0, len(text), chunk_size):
+        chunks.append(text[i:i+chunk_size])
+    return chunks
+chunks = split_text(ipc_text)[:2000]
+print("✅ Total Chunks Used:", len(chunks))
+model = SentenceTransformer('all-MiniLM-L6-v2')
+embeddings = model.encode(chunks)
+print("✅ Embeddings Created!")
+dimension = embeddings.shape[1]
+index = faiss.IndexFlatL2(dimension)
+index.add(np.array(embeddings))
+print("✅ FAISS Index Ready!")
+co = cohere.Client("1lYgysNfx6fFLK8GDwJt14IPUzWkjbHIjKHhdN5y")
+def ask_ipc(question):
+    q_embedding = model.encode([question])
+
+    D, I = index.search(np.array(q_embedding), k=3)
+    context = " ".join([chunks[i] for i in I[0]])
+
+    response = co.chat(
+        model="command-nightly",
+        message=f"""
+Answer the question based on the Indian Penal Code context.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
+    )
+
+    return response.text.strip()
+print("\n🤖 IPC Chatbot Ready! (type 'exit' to quit)\n")
+
+while True:
+    query = input("Ask IPC Question: ")
+
+    if query.lower() == "exit":
+        print("👋 Exiting Chatbot. Goodbye!")
+        break
+
+    print("\n💡 Answer:", ask_ipc(query), "\n")

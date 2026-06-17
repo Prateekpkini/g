@@ -1,0 +1,25 @@
+!pip install langchain langchain-cohere cohere -q
+import os
+from langchain_cohere import ChatCohere
+from langchain_core.prompts import PromptTemplate
+from google.colab import drive
+os.environ["COHERE_API_KEY"] = "1lYgysNfx6fFLK8GDwJt14IPUzWkjbHIjKHhdN5y"
+drive.mount('/content/drive')
+file_path = "/content/sample_data/document.txt"
+with open(file_path, "r") as file:
+    document = file.read()
+prompt = PromptTemplate(
+    input_variables=["text"],
+    template="""
+Read the following document:
+
+{text}
+
+Summarize the document in 3 simple points.
+"""
+)
+llm = ChatCohere(model="command-a-03-2025")
+final_prompt = prompt.format(text=document)
+response = llm.invoke(final_prompt)
+print("Generated Summary:\n")
+print(response.content)
