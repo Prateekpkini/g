@@ -1,0 +1,26 @@
+!pip install gensim -q
+import gensim.downloader as api
+print("Loading word embedding model...\n")
+model = api.load("glove-wiki-gigaword-100")
+print("Model loaded successfully!\n")
+seed_word = input("Enter a seed word: ").lower()
+print("\nTop 5 Similar Words:\n")
+try:
+    similar_words = model.most_similar(seed_word, topn=5)
+
+    word_list = []
+
+    for word, score in similar_words:
+        print(word)
+        word_list.append(word)
+except:
+    print("Word not found in vocabulary. Try another word.")
+    exit()
+print("\nGenerated Paragraph:\n")
+paragraph = f"""
+One day, a {seed_word} decided to start an adventure.
+On the way, it met a {word_list[0]} and a {word_list[1]}.
+They travelled across {word_list[2]} lands full of {word_list[3]} experiences.
+In the end, their journey became a {word_list[4]} story that inspired everyone.
+"""
+print(paragraph)
