@@ -3,7 +3,7 @@ import os
 from langchain_cohere import ChatCohere
 from langchain_core.prompts import PromptTemplate
 from google.colab import drive
-os.environ["COHERE_API_KEY"] = "1lYgysNfx6fFLK8GDwJt14IPUzWkjbHIjKHhdN5y"
+os.environ["COHERE_API_KEY"] = "API KEY"
 drive.mount('/content/drive')
 file_path = "/content/sample_data/document.txt"
 with open(file_path, "r") as file:

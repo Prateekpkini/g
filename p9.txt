@@ -5,7 +5,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_community.tools import WikipediaQueryRun
 from pydantic import BaseModel
-os.environ["COHERE_API_KEY"] = "1lYgysNfx6fFLK8GDwJt14IPUzWkjbHIjKHhdN5y"
+os.environ["COHERE_API_KEY"] = "API KEY"
 llm = ChatCohere(model="command-a-03-2025")
 institution = input("Enter Institution Name: ")
 wiki = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())

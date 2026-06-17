@@ -32,7 +32,7 @@ dimension = embeddings.shape[1]
 index = faiss.IndexFlatL2(dimension)
 index.add(np.array(embeddings))
 print("✅ FAISS Index Ready!")
-co = cohere.Client("1lYgysNfx6fFLK8GDwJt14IPUzWkjbHIjKHhdN5y")
+co = cohere.Client("API KEY")
 def ask_ipc(question):
     q_embedding = model.encode([question])
 
