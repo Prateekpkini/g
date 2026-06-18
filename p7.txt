@@ -1,7 +1,7 @@
 !pip install transformers==4.41.2
 from transformers import pipeline
 print("Loading Summarization Model...")
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")##Bidirectional and Auto-Regressive Transformers
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 print("Model Loaded Successfully!")
 text = """
 Artificial Intelligence (AI) is transforming industries such as healthcare,
